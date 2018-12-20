@@ -1,0 +1,65 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[UKenglish]{babel}
+\newcommand{\Mod}[0]{\text{ mod }}
+\usepackage{siunitx}
+\usepackage{color}
+\usepackage[]{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{fancyvrb}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{comment} 
+\usepackage[]{lipsum}
+\usepackage{subfiles}
+\usepackage{url}
+\usepackage{smartdiagram}
+\floatplacement{figure}{H}
+\usepackage{float}
+\usepackage{hyperref}
+
+\usepackage{etoolbox}
+\patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+
+
+\usepackage{graphicx}
+\DeclareGraphicsExtensions{.png}
+\graphicspath{ {./figures/} }
+
+
+\title{DM848 - Kubernetes of Jolie services\\\rule{10cm}{0.5mm}}
+\author{Steffen Berg Klenow, sklen15\\ Joel Händig, jhand16\\ Kamilla Matisz, kamat18\\ Ilona Benko, ilben18 \\ Anders Fylling, --username?
+\\\\Supervisor: Jacopo Mauro\\\rule{5.5cm}{0.5mm}\\}
+\date{\today}
+
+\begin{document}
+\clearpage\maketitle
+\thispagestyle{empty}
+
+\newpage
+\clearpage\tableofcontents
+\thispagestyle{empty}
+
+\newpage
+\setcounter{page}{1}
+
+\section{Introduction}
+	\subfile{introduction}
+
+\section{Preliminaries}
+	\subfile{preliminaries}
+
+\section{Technical Description}
+	\subfile{technical_description}
+	
+\section{Related Work and Discussion}
+	\subfile{relatedwork_discussion}
+
+\end{document}
