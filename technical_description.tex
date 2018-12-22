@@ -2,4 +2,35 @@
 \begin{document}
 %  Preliminaries. Give a brief overview of the background knowledge needed to understand your report. Provide references to what you have used and report the main concepts that your work is based on.
 Technical description section
+\subsection{Core functionality - The jolie deployer and cloud server}
+The core functionality of the system - deploying and accessing a user defined jolie program, is carried out by the {\tt jolie deployer} and {\tt cloud server} programs. The functionality that is exposed to a user is:
+\begin{itemize}
+\item Deploy a jolie program. With this request, a manifest is given, where the user specifies what resources the program needs to use and how many replicas should be started.
+\item See the status of all programs deployed by a user
+\item Undeploy a jolie program
+\end{itemize}
+The two programs are tightly coupled, but have distinct responsibilities in the system. The {\tt cloud server} acts as a wrapper around the user service, and for each replica of the user program runs inside exactly one instance of the {\tt cloud server}. The {\tt jolie deployer} recieves requests from the user, and starts or stops services accordingly.
+\subsubsection{Deploying a user program}
+When a user program should be started, the {\tt jolie deployer} creates a unique token that identifies the particular user service with the {\tt new} primitive. The user program is then written to a persistant storage, with the token as filename. It then creates a {\tt deployment.yaml} file and a {\tt service.yaml} file that matches the users request, tagging it with the token and then runs the command {\tt kubectl create -f deployment.yaml} and {\tt kubectl create -f service.yaml}. The image that is supplied in the {\tt deployment.yaml} file is the {\tt cloud server}, and this is the same for every user service across the system. It also sets the token that identifies the specific program as an enviroment variable. This means that the {\tt cloud server} has access to the token. On initialization, the {\tt cloud server} checks the enviroment variable that holds the token, and asks the {\tt jolie deployer} to send the program identified by this token. The {\tt jolie deployer} then gets the program from the disk, and returns it to the {\tt cloud server}, that can embed the program and run it. The token that identifies the program is returned to the user.
+\\\\
+This system makes it possible to for a deployment to run several replicas, as each {\tt cloud server} is responsible for fetching it's own program that it should embed. If the pod running the {\tt cloud server} crashes, the program will then again be loaded and embedded.
+\subsubsection{Seeing the status of programs}
+Getting the status of a program is done by a combination of querying with the {\tt kubectl get} command, and calling the {\tt status} function in the {\tt cloud server}. The {\tt cloud server} then get the status of the embedded program with {\tt stats@Runtime} function. The information is neatly formatted and returned to the user.
+\subsubsection{Undeploying a user program}
+To undeploy a program, the user provides the token that identifies the program. Before it is unloaded, all the replicas running the program is notified. After a short period of time, the {\tt kubectl delete service [TOKEN]} and {\tt kubectl delete deployment [TOKEN]} is run. The code of the program is also removed from the persistant storage.
+\subsubsection{Using the user-defined health check}
+When deploying a jolie program, the user is given the option to define his/her own health check function. The user does this by setting the {\tt .healthcheck} variable in the request to {\tt true}, and making the program answer with the string {\tt "true"} on location 4001/health, if the program should be considered healthy. When this is set, the {\tt jolie deployer} defines a liveness probe in the {\tt deployment.yaml} file, which runs the script {\tt alive.sh} in the pod that is inspected for health. This script is found in the container running the {\tt cloud server}, and it calls the user programs health function, and only exits with a zero code if the response is equal to {\tt "true"}. Kubernetes is responsible for running this command, and restarting the pod if it is unhealty. If no health check is supplied, kubernetes will use it's standard way of evaluating pod health.
+
+\subsubsection{Persistant storage}
+%TODO
+\subsubsection{Denying users program that use to much resources}
+%TODO
+\subsubsection{Tests}
+The following scripts test the core functionality.
+\begin{itemize}
+\item {\tt test\_deploy\_service.sh}. This test loads the user service {\tt user\_print.ol} with the program {\tt load.ol}. Using the IP and token that is returned, it calls the {\tt print} function, compares it to the expected output, and then unloads the program. It the tries to call the user program again. If the user script responds with the wrong string, responds to late, or responds correctly after it have been deployed, the test fails.
+\item {\tt test\_multiple\_replicas.sh} This tests works in a similar fashion as the {\tt test\_deploy\_service.sh}, but it requests 3 replicas of the program. It the calls it 10 times, to see that all the replicas have loaded the program. It fails if any of the 10 responses are wrong, return to late, or answers after it has been undeployed.
+\item {\tt test\_user\_def\_health\_check.sh}. This test deploys the service {\tt crashtest.ol}, which has a health check. It also has a function {\tt crash}, that loops indefinently, making the program unable to answer the health check. The test then calls the {\tt crash} function, and then waits for 60 seconds, to give kuberenetes time to restart the service. It then calls the service again, and if the output is correct, the test succeeds.
+\item {\tt test\_resource\_req.sh}. This test tries to deploy services with both normal requirements and too high requests for memory and cpu. The test fails if service is loaded when the requests are too high, or the service is not loaded when the request is reasonable.
+\end{itemize}
 \end{document}
