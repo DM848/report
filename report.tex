@@ -1,5 +1,5 @@
 \documentclass[a4paper,11pt]{article}
-\usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
+\usepackage[a4paper,top=2.1cm,bottom=2.1cm,left=2.4cm,right=2.4cm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[UKenglish]{babel}
@@ -24,9 +24,30 @@
 \floatplacement{figure}{H}
 \usepackage{float}
 \usepackage{hyperref}
+\usepackage{color}
+\usepackage{xcolor}
 
 \usepackage{etoolbox}
 \patchcmd{\thebibliography}{\section*{\refname}}{}{}{}
+
+\definecolor{background}{RGB}{210, 210, 210}
+\lstdefinestyle{terminal}{
+	language=bash,
+	aboveskip=2mm,
+	belowskip=2mm,
+	showstringspaces=false,
+	columns=flexible,
+	basicstyle={\small\ttfamily},
+	numbers=none,
+	numberstyle=\footnotesize,
+	commentstyle=\color{black},
+	frame=single,
+	framesep=2pt,
+	breaklines=true,
+	breakatwhitespace=false,
+	backgroundcolor = \color{background},
+	tabsize=2
+}
 
 
 \usepackage{graphicx}
@@ -59,6 +80,9 @@
 \section{Technical Description}
 	\subfile{technical_description}
 	
+\section{Setting up the system}
+	\subfile{setting_up_the_system}
+
 \section{Related Work and Discussion}
 	\subfile{relatedwork_discussion}
 

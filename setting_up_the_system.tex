@@ -1,0 +1,73 @@
+\documentclass[Report.tex]{subfiles}
+\begin{document}
+%  how to set up the system with all its parts
+
+This project has been created mainly using the google cloud. The following is a guide to how to create the cluster
+
+
+
+\subsection{Creating the cluster}
+A google kuberentes cluster can either be created through the gcloud console or through the command line, the following describes how to do it through the command line. Having this installed also makes development easier.
+
+The Google Cloud SDK should be installed first. This is done by the following commands:
+\begin{lstlisting}[style=terminal]
+curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-228.0.0-linux-x86_64.tar.gz
+tar zxvf google-cloud-sdk-228.0.0-linux-x86_64.tar.gz google-cloud-sdk
+./google-cloud-sdk/install.sh
+\end{lstlisting}
+
+Initialize the SDK, run the following command, and follow the guide. This means authorization your google account and selecting a project.
+\begin{lstlisting}[style=terminal]
+gcloud init --console-only
+\end{lstlisting}
+
+A cluster can now be created with the command:
+\begin{lstlisting}[style=terminal]
+gcloud container clusters create mycluster --region europe-north1-a --num-nodes=8
+\end{lstlisting}
+
+For development kubectl is very helpful and can installed by the following command:
+\begin{lstlisting}[style=terminal]
+gcloud components install kubectl
+\end{lstlisting}
+
+Get the credential to the cluster through gcloud:
+\begin{lstlisting}[style=terminal]
+gcloud container clusters get-credentials mycluster --region europe-north1-a
+\end{lstlisting}
+
+
+\subsection{Adding the jolie deployer}
+Creating and starting the jolie deployer service is very easy when using the kubernetes configuration files. But before that the containers needs permission in order to run kubectl commands on the cluster, this is done by applying the \texttt{auth.yaml} file:
+\begin{lstlisting}[style=terminal]
+kubectl apply -f auth.yaml
+\end{lstlisting}
+
+Create and start the service by applying the two files \texttt{embed-deployment.yaml} and \texttt{embed-service.yaml} describing the service (these are found in the XXXXXXXXXXXXXXXXXX folder).
+\begin{lstlisting}[style=terminal]
+kubectl create -f embed-deployment.yaml
+kubectl create -f embed-service.yaml
+\end{lstlisting}
+
+
+\subsection{Consul}
+Installing consul is done by...
+
+
+\subsection{Datadog}
+Installing datadog is done by...
+
+... the monitoring interface can then be accessed by...
+
+\subsection{Jenkins}
+Jenkins is used to create pipelines which builds, tests and deploys new images into the cluster.
+The jenkins server should have access to the cluster and be able to build docker images. This means docker should be installed and the machine running docker should be authorized to access the cluster.
+
+Installing docker is done by the following:
+\begin{lstlisting}[style=terminal]
+curl -fsSL https://get.docker.com -o get-docker.sh
+sh get-docker.sh
+\end{lstlisting}
+
+
+\end{document}
