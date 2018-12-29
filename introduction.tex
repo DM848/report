@@ -1,5 +1,10 @@
 \documentclass[report.tex]{subfiles}
 \begin{document}
 % Introduction. This section gives an overview of the motivations and results of what you have done. Describe the challenge that you want to address, motivating why it is relevant.
-Introduction section
+This project creates the Kubernetes of Jolie services. This means that a user can deploy a stateless replicated Jolie service in the cloud. This is done mainly by using Kubernetes and dynamic embedding of user scripts. Kubernetes have many neat features which we can easily exploit, and give nice features to the user. Without Kubernetes this project would have become much harder, due to we more or less our selves would have had to make something like Kubernetes to be able to deploy and replicate user scripts. When running something replicated there is always the challenge of consistency, all replicas should have the same information and be in the same state.
+
+It is easy to deploy a script in Kuberenetes and using the built in load balancer. But this is expensive. A challenge was to remove this load balancer and add our own. This was done using the service discovery tool Consul.
+
+In order for the administrator to monitor the cluster the monitoring tool Datadog has been installed into the cluster.
+
 \end{document}
